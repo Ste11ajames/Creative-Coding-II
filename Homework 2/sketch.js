@@ -5,8 +5,8 @@ var speedX, speedY;
 function setup()
 {
     createCanvas(800,800)
-    circleX = width / 2;
-    circleY = height / 2;
+    circleX = width / 5;
+    circleY = height / 5;
     rectangleXX = random(width);
     rectangleYY = random(height);
   
