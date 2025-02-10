@@ -1,35 +1,24 @@
-var borzoi;
-var borzoiX = 100;
-var borzoiY = 100;
-var borzoiSpeed = 2;
 
-function preload() {
-  borzoi = loadImage('images/borzoi.png'); // Fixed typo
-}
 
 function setup() {
   createCanvas(800, 800);
   noStroke();
+
+
+
 }
+
+
 
 function draw() {
   background(200, 60, 16);
 
-  console.log("draw is running");
   
+
   // Draw the bagel
   drawBagel(width / 2, height / 2, 200, 80);
 
-  // Draw the Borzoi image
-  image(borzoi, borzoiX, borzoiY, 200, 200); // Added width and height
 
-  // Move the Borzoi image
-  borzoiX += borzoiSpeed; // Fixed variable name
-
-  // Bounce off edges
-  if (borzoiX >= width - 200 || borzoiX <= 0) {
-    borzoiSpeed *= -1;
-  }
 
   // Draw text
   fill(255);
@@ -40,6 +29,7 @@ function draw() {
   text("Stella Smith", width - 140, height - 10); // Bottom right
 }
 
+
 function drawBagel(x, y, outerDiameter, innerDiameter) {
   fill(237, 192, 121);
   ellipse(x, y, outerDiameter);
@@ -49,6 +39,9 @@ function drawBagel(x, y, outerDiameter, innerDiameter) {
 
   drawSeeds(x, y, outerDiameter, innerDiameter);
 }
+
+
+
 
 function drawSeeds(x, y, outerDiameter, innerDiameter) {
   fill(220, 180, 90);
@@ -66,4 +59,6 @@ function drawSeeds(x, y, outerDiameter, innerDiameter) {
     ellipse(0, 0, 4, 10);
     pop();
   }
+
+  
 }
