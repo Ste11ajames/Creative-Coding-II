@@ -1,6 +1,5 @@
+class character{
 
-class bird
-{
     constructor(path){
 
         this.path = path;
@@ -11,6 +10,11 @@ class bird
     {
         //draw image
 image(this.myImage, 100, 100);
+
+    }
+
+    hasCollided(x2, y2, w2, h2) {
+        
 
     }
 }
