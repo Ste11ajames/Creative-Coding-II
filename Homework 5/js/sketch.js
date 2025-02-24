@@ -10,7 +10,8 @@ function preload(){
         {
 
         myCharacter = new character("images/Jump (" + i +").png"); 
-   
+    // i + is the concatenation - adding number to string - adding strings together
+    //place png images here
     animation.push(myCharacter);
     }
     
