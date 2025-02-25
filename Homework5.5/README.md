@@ -1,0 +1,1 @@
+I'm honestly pretty proud of myself for figuring a lot fo the errors out on my own for this one! My character would move back to his starting position everytime i moved him but now he moves without doing that, however... he does have glitvhy shadow like thing that I couldnt quite figure out . For now I think it's alright. 

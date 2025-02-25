@@ -1,6 +1,6 @@
 class character{
 
-    constructor(path, x, y)
+    constructor(path)
     {
 
         this.path = path;

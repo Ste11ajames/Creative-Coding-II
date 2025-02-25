@@ -55,6 +55,17 @@ function draw() {
         if (key == "s") {
             y++;
         }
+
+        if (keyIsDown(82)) { // R key
+            x = 100;
+            y = 100;
+        }
+        if (animation.length > 0) {
+            animation[i].x = x;
+            animation[i].y = y;
+            animation[i].draw();
+        }
+
         for (let i = 0; i < 10; i++) {
             animation[i].x = x;
             animation[i].y = y;
@@ -65,6 +76,7 @@ function draw() {
                 foodArray.splice(k, 1);
                 
             }
+            
            
             
         }
