@@ -7,11 +7,13 @@ var foodfound = false;
 var animation = [];
 var runAnimation = [];
 var idleStrings =[];
+var runStrings =[];
 
 var i = 0;
 function preload(){
 
     idleStrings=loadStrings("data/idle.txt")
+    runStrings=loadStrings("data/run.txt")
 console.log(idleStrings.length)
    
     
@@ -38,10 +40,13 @@ function setup()
             //place png images here
             animation.push(myCharacter);
             
-            myCharacter = new character("images/Run (" + i +").png"); 
+          
         
+
+            myCharacter = new character(runStrings[i]); 
             runAnimation.push(myCharacter); //add run strings
 
+        
         }
 }
 
@@ -101,7 +106,7 @@ function draw() {
 function updateIndex() 
 {
     i++;
-    if (i > animation.length - 1) {
+    if (i > idleStrings.length - 1) {
         i = 0;
     }
 
