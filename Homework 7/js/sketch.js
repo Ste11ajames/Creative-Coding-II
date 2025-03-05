@@ -1,4 +1,3 @@
-
 var myCharacter;
 var myFood;
 var x = 100;
@@ -17,6 +16,7 @@ var startTime;
 var gameOver = false;
 
 function preload() {
+    soundFormats('mp3', 'ogg', 'wav');
     idleStrings = loadStrings("data/idle.txt");
     runStrings = loadStrings("data/run.txt");
     
@@ -45,7 +45,7 @@ function setup() {
 }
 
 function draw() {
-    background(120);
+    background(83, 195, 189);
 
 
     let elapsedTime = millis() - startTime;
@@ -144,3 +144,14 @@ class food {
 
 
 
+
+
+
+
+
+
+
+
+
+  
+ 
