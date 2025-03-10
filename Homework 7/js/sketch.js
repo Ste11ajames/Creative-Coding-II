@@ -73,12 +73,27 @@ function draw() {
         }
 
         if (keyIsPressed) {
-            runAnimation[i].draw();
-            if (key == "a") x--, flipX = true;
-            if (key == "d") x++, flipX = false;
-            if (key == "w") y--;
-            if (key == "s") y++;
+            runAnimation[i].draw(); // Running animation when a key is pressed
+        } else {
+            animation[i].draw(); // Idle animation when no key is pressed
+        }
 
+        // Character movement
+        if (keyIsPressed) {
+            if (key == "a") {
+                x--;
+                flipX = true;
+            }
+            if (key == "d") {
+                x++;
+                flipX = false;
+            }
+            if (key == "w") {
+                y--;
+            }
+            if (key == "s") {
+                y++;
+            }
             for (let i = 0; i < idleStrings.length; i++) {
                 animation[i].flipX = flipX;
                 animation[i].x = x;
