@@ -10,48 +10,52 @@ var idleStrings = [];
 var runStrings = [];
 var flipX = false;
 var i = 0;
-var score = 0; //food tracking score
-var gameDuration = 60000; // 60 seconds 
+var score = 0; 
+var gameDuration = 60000; 
 var startTime;
 var gameOver = false;
+let backgroundMusic;
+let goodFoodSound;
+let badFoodSound;
 
 function preload() {
     soundFormats('mp3', 'ogg', 'wav');
+    backgroundMusic = loadSound('sounds/background.mp3');
+    goodFoodSound = loadSound('sounds/good.mp3');
+    badFoodSound = loadSound('sounds/bad.mp3');
+
     idleStrings = loadStrings("data/idle.txt");
     runStrings = loadStrings("data/run.txt");
-    
 }
 
 function setup() {
     createCanvas(800, 800);
-    startTime = millis(); //game timer
+    startTime = millis(); 
 
     setInterval(updateIndex, 50);
-    
-   
+ let total
     for (let i = 0; i < 5; i++) {
-        myFood = new food(random(100, 600), random(100, 600), 25);
+        let type = random() > 0.5 ? "good" : "bad"; 
+        let myFood = new Food(random(100, 600), random(100, 600), 25, type);
         foodArray.push(myFood);
     }
 
-    
     for (let i = 0; i < idleStrings.length; i++) {
         myCharacter = new character(idleStrings[i], x, y);
         animation.push(myCharacter);
 
         myCharacter = new character(runStrings[i], x, y);
         runAnimation.push(myCharacter);
+        
     }
 }
 
 function draw() {
     background(83, 195, 189);
 
-
     let elapsedTime = millis() - startTime;
     let timeLeft = max(0, (gameDuration - elapsedTime) / 1000); 
 
-    // game info display
     fill(255);
     textSize(32);
     textAlign(LEFT, TOP);
@@ -63,29 +67,17 @@ function draw() {
     }
 
     if (!gameOver) {
-       
         for (let i = 0; i < foodArray.length; i++) {
             foodArray[i].move(); 
             foodArray[i].draw();
         }
 
-        // Character movement & animation
         if (keyIsPressed) {
             runAnimation[i].draw();
-            if (key == "a") {
-                x--;
-                flipX = true;
-            }
-            if (key == "d") {
-                x++;
-                flipX = false;
-            }
-            if (key == "w") {
-                y--;
-            }
-            if (key == "s") {
-                y++;
-            }
+            if (key == "a") x--, flipX = true;
+            if (key == "d") x++, flipX = false;
+            if (key == "w") y--;
+            if (key == "s") y++;
 
             for (let i = 0; i < idleStrings.length; i++) {
                 animation[i].flipX = flipX;
@@ -96,15 +88,26 @@ function draw() {
                 runAnimation[i].y = y;
             }
 
-            // Check for food collisions
-            for (let k = 0; k < foodArray.length; k++) {
+            for (let k = foodArray.length - 1; k >= 0; k--) {
                 if (animation[i].hasCollided(foodArray[k].x, foodArray[k].y, 25, 25)) {
-                    foodArray.splice(k, 1); // Remove food
-                    score++; // Increase score
+                    if (foodArray[k].type === "good") {
+                        score++; 
+                        goodFoodSound.play();
+                    } else {
+                        score--; 
+                        badFoodSound.play();
+                    }
+                    foodArray.splice(k, 1);
                 }
             }
-        } else {
-            animation[i].draw();
+            if (!gameOver) {
+                if (keyIsPressed) {
+                    runAnimation[i].draw();
+                } else {
+                    animation[i].draw();
+                }
+            }
+            
         }
     } else {
         textSize(50);
@@ -112,36 +115,38 @@ function draw() {
         text("Game Over :D", width / 2, height / 2);
         textSize(40);
         text("Your Final Score: " + score, width / 2, height / 2 + 60);
-        noLoop(); // Stop the game
+        noLoop(); 
     }
 }
 
 function updateIndex() {
-    i++;
-    if (i > idleStrings.length - 1) {
-        i = 0;
+    i = (i + 1) % idleStrings.length;
+}
+
+function mousePressed() {
+    if (!backgroundMusic.isPlaying()) {
+        backgroundMusic.loop();
     }
 }
 
-// Food movement
-class food {
-    constructor(x, y, size) {
+class Food {
+    constructor(x, y, size, type) {
         this.x = x;
         this.y = y;
         this.size = size;
+        this.type = type;
     }
 
     draw() {
-        fill(255, 0, 0);
+        fill(this.type === "good" ? [0, 255, 0] : [255, 0, 0]);
         ellipse(this.x, this.y, this.size, this.size);
     }
 
     move() {
-        this.x += random(-2, 2); 
+        this.x += random(-2, 2);
         this.y += random(-2, 2);
     }
 }
-
 
 
 

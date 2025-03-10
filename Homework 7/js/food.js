@@ -1,4 +1,4 @@
-class badFood {
+class food {
     constructor(x,y)
     {
         this.x = x;
@@ -6,7 +6,7 @@ class badFood {
 
     }
     draw() {
-        fill(145, 56, 49);
+        fill(33, 100, 67);
        circle(this.x, this.y, 40);
        
     }
