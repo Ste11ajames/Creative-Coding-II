@@ -1,125 +1,177 @@
-let player;
-let idleAnim, runAnim;
-let obstacles = [];
-let collectibles = [];
-let badItems = [];
-let score = 0;
-let health = 5;
+var myCharacter;
+var myFood;
+var x = 100;
+var y = 100;
+var foodArray = [];
+var foodFound = false;
+var animation = [];
+var runAnimation = [];
+var idleStrings = [];
+var runStrings = [];
+var flipX = false;
+var i = 0;
+var score = 0; 
+var gameDuration = 60000; 
+var startTime;
+var gameOver = false;
+let backgroundMusic;
+let goodFoodSound;
+let badFoodSound;
 
 function preload() {
-  idleAnim = loadAnimation();
-  runAnim = loadAnimation();
+    soundFormats('mp3', 'ogg', 'wav');
+    backgroundMusic = loadSound('sounds/background.mp3');
+    goodFoodSound = loadSound('sounds/good.mp3');
+    badFoodSound = loadSound('sounds/bad.mp3');
 
-  // Load idle animation frames
-  for (let i = 1; i <= 15; i++) {
-    idleAnim.addFrame(loadImage(`images/idle(${i}).png`));
-    runAnim.addFrame(loadImage(`images/run(${i}).png`));
-  }
+    idleStrings = loadStrings("data/idle.txt");
+    runStrings = loadStrings("data/run.txt");
 }
 
 function setup() {
-  createCanvas(800, 400);
+    createCanvas(800, 800);
+    startTime = millis(); 
 
-  // Player setup
-  player = createSprite(width / 2, height / 2, 40, 40);
-  player.addAnimation("idle", idleAnim);
-  player.addAnimation("run", runAnim);
-  player.scale = 0.5; // Scale down if images are too big
+    setInterval(updateIndex, 50);
+ let total
+    for (let i = 0; i < 5; i++) {
+        let type = random() > 0.5 ? "good" : "bad"; 
+        let myFood = new Food(random(100, 600), random(100, 600), 25, type);
+        foodArray.push(myFood);
+    }
 
-  // Create obstacles
-  for (let i = 0; i < 3; i++) {
-    let obs = createSprite(random(100, 700), random(100, 300), 50, 50);
-    obs.shapeColor = color(150);
-    obstacles.push(obs);
-  }
+    for (let i = 0; i < idleStrings.length; i++) {
+        myCharacter = new character(idleStrings[i], x, y);
+        animation.push(myCharacter);
 
-  // Create collectible items
-  for (let i = 5; i > 0; i--) {
-    let item = createSprite(random(100, 700), random(100, 300), 20, 20);
-    item.shapeColor = color(0, 255, 0);
-    collectibles.push(item);
-  }
-
-  // Create bad items
-  for (let i = 3; i > 0; i--) {
-    let bad = createSprite(random(100, 700), random(100, 300), 20, 20);
-    bad.shapeColor = color(255, 0, 0);
-    badItems.push(bad);
-  }
+        myCharacter = new character(runStrings[i], x, y);
+        runAnimation.push(myCharacter);
+        
+    }
 }
 
 function draw() {
-  background(220);
+    background(83, 195, 189);
 
-  // Reset movement
-  player.velocity.x = 0;
-  player.velocity.y = 0;
+    let elapsedTime = millis() - startTime;
+    let timeLeft = max(0, (gameDuration - elapsedTime) / 1000); 
 
-  if (keyIsDown(LEFT_ARROW) || keyIsDown(65)) {
-    player.velocity.x = -3;
-    player.changeAnimation("run");
-  } else if (keyIsDown(RIGHT_ARROW) || keyIsDown(68)) {
-    player.velocity.x = 3;
-    player.changeAnimation("run");
-  }
+    fill(255);
+    textSize(32);
+    textAlign(LEFT, TOP);
+    text("Time Left: " + timeLeft.toFixed(1), 20, 20);
+    text("Score: " + score, 20, 60);
 
-  if (keyIsDown(UP_ARROW) || keyIsDown(87)) {
-    player.velocity.y = -3;
-    player.changeAnimation("run");
-  } else if (keyIsDown(DOWN_ARROW) || keyIsDown(83)) {
-    player.velocity.y = 3;
-    player.changeAnimation("run");
-  }
-
-  if (player.velocity.x === 0 && player.velocity.y === 0) {
-    player.changeAnimation("idle");
-  }
-
-  // Prevent passing through obstacles
-  for (let obs of obstacles) {
-    player.collide(obs);
-  }
-
-  // Collect items
-  for (let i = collectibles.length - 1; i >= 0; i--) {
-    if (player.overlap(collectibles[i])) {
-      collectibles[i].remove();
-      collectibles.splice(i, 1);
-      score++;
+    if (elapsedTime >= gameDuration) {
+        gameOver = true;
     }
-  }
 
-  // Collision with bad items
-  for (let i = badItems.length - 1; i >= 0; i--) {
-    if (player.overlap(badItems[i])) {
-      badItems[i].remove();
-      badItems.splice(i, 1);
-      health--;
+    if (!gameOver) {
+        for (let i = 0; i < foodArray.length; i++) {
+            foodArray[i].move(); 
+            foodArray[i].draw();
+        }
+
+        if (keyIsPressed) {
+            runAnimation[i].draw(); // Running animation when a key is pressed
+        } else {
+            animation[i].draw(); // Idle animation when no key is pressed
+        }
+
+        // Character movement
+        if (keyIsPressed) {
+            if (key == "a") {
+                x--;
+                flipX = true;
+            }
+            if (key == "d") {
+                x++;
+                flipX = false;
+            }
+            if (key == "w") {
+                y--;
+            }
+            if (key == "s") {
+                y++;
+            }
+            for (let i = 0; i < idleStrings.length; i++) {
+                animation[i].flipX = flipX;
+                animation[i].x = x;
+                animation[i].y = y;
+                runAnimation[i].flipX = flipX;
+                runAnimation[i].x = x;
+                runAnimation[i].y = y;
+            }
+
+            for (let k = foodArray.length - 1; k >= 0; k--) {
+                if (animation[i].hasCollided(foodArray[k].x, foodArray[k].y, 25, 25)) {
+                    if (foodArray[k].type === "good") {
+                        score++; 
+                        goodFoodSound.play();
+                    } else {
+                        score--; 
+                        badFoodSound.play();
+                    }
+                    foodArray.splice(k, 1);
+                }
+            }
+            if (!gameOver) {
+                if (keyIsPressed) {
+                    runAnimation[i].draw();
+                } else {
+                    animation[i].draw();
+                }
+            }
+            
+        }
+    } else {
+        textSize(50);
+        textAlign(CENTER, CENTER);
+        text("Game Over :D", width / 2, height / 2);
+        textSize(40);
+        text("Your Final Score: " + score, width / 2, height / 2 + 60);
+        noLoop(); 
     }
-  }
+}
 
-  // Display Score & Health
-  fill(0);
-  textSize(20);
-  text(`Score: ${score}`, 20, 30);
-  text(`Health: ${health}`, 20, 60);
+function updateIndex() {
+    i = (i + 1) % idleStrings.length;
+}
 
-  // Check Win/Loss Conditions
-  if (score >= 10) {
-    textSize(40);
-    fill(0, 255, 0);
-    text("YOU WIN!", width / 2 - 80, height / 2);
-    noLoop();
-  }
+function mousePressed() {
+    if (!backgroundMusic.isPlaying()) {
+        backgroundMusic.loop();
+    }
+}
 
-  if (health <= 0) {
-    textSize(40);
-    fill(255, 0, 0);
-    text("GAME OVER!", width / 2 - 100, height / 2);
-    noLoop();
-  }
+class Food {
+    constructor(x, y, size, type) {
+        this.x = x;
+        this.y = y;
+        this.size = size;
+        this.type = type;
+    }
 
-  drawSprites();
+    draw() {
+        fill(this.type === "good" ? [0, 255, 0] : [255, 0, 0]);
+        ellipse(this.x, this.y, this.size, this.size);
+    }
+
+    move() {
+        this.x += random(-2, 2);
+        this.y += random(-2, 2);
+    }
 }
 
 
+
+
+
+
+
+
+
+
+
+  
+ 
