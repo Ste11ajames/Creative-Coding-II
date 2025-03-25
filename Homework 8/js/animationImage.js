@@ -1,64 +1,41 @@
-class animationImage{
-
-    constructor( x, y, w, h)
-    {
-        this.x = x;
-        this.y = y;
-        this.w = w;
-        this.h = h;
-        this.imageObjects = [];
-        this.currentAnimation;
-        this.createAnimation(); // new function
-        this.i = 0;
-        this.currentFrameCount = 0;
-        this.direction  = "";      
+class animationImage {
+    constructor(x, y) {
+      this.sprite = new Sprite(x, y);
+      this.sprite.scale = 0.4;
+      this.sprite.rotationLock = true;
+      this.sprite.collider = 'dynamic';
+      this.sprite.diameter = .1;
+      this.sprite.debug = true;
     }
-
-    getX(){
-        return this.x;
+  
+    loadAnimation(name, anim) {
+      this.sprite.addAnimation(name, anim);
     }
-
-    setX(x) {
-        this.x = x;
+  
+    drawAnimation(name) {
+      this.sprite.changeAnimation(name);
     }
-
-setCurrentFrameCount(currentFrameCount) {
-    this.currentFrameCount = currentFrameCount;
-}
-    createAnimation()
-{
-    this.currentAnimation = createSprite(300, 250);
-}
-
-
-loadAnimation(animationType,fileNames)
-{ 
-    this.currentAnimation.addAnimation(animationType,fileNames[0], fileNames[fileNames.length-1]);
-       
-}
-drawAnimation(animationType) {
-        
-    this.currentAnimation.frameDelay = 5;
-    this.currentAnimation.scale = .5;
-    this.currentAnimation.changeAnimation(animationType);
-    if (animationType == 'run' && this.direction == 'forward') {
-        this.currentAnimation.direction = 0;
-        this.currentAnimation.mirror.x = false;
-        this.currentAnimation.speed = 1;
-
+  
+    updatePosition() {
+      this.sprite.velocity.x = 0;
+      this.sprite.velocity.y = 0;
+  
+      const speed = 3;
+  
+      if (keyIsDown(RIGHT_ARROW)) {
+        this.sprite.velocity.x = speed;
+        this.sprite.mirror.x = false;
+      }
+      if (keyIsDown(LEFT_ARROW)) {
+        this.sprite.velocity.x = -speed;
+        this.sprite.mirror.x = true;
+      }
+      if (keyIsDown(UP_ARROW)) {
+        this.sprite.velocity.y = -speed;
+      }
+      if (keyIsDown(DOWN_ARROW)) {
+        this.sprite.velocity.y = speed;
+      }
     }
-    else if (animationType == 'run' && this.direction == 'reverse') {
-
-        this.currentAnimation.mirror.x = true;
-        this.currentAnimation.direction = 180;
-        this.currentAnimation.speed = 1;
-
-    }
-    else {
-        this.currentAnimation.velocity.x = 0;
-    }
-
-
-}
-
-}
+  }
+  
