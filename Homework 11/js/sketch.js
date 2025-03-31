@@ -64,7 +64,7 @@ function draw() {
     showMessage("You Lose", "red");
     return;
   }
-
+//attack
   else if (kb.pressing('x')) {
     myAnimation.drawAnimation('attack');
   
