@@ -11,6 +11,7 @@ class animationImage {
   
     createAnimation() {
       this.currentAnimation = createSprite(this.x, this.y);
+      this.currentAnimation.rotationLock = true;
     }
   
     getCurrentAnimation() {

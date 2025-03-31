@@ -1,10 +1,12 @@
 let myAnimation;
 let boyIdle, boyRun, boyAttack;
 let treeImage;
-let tree;
-let treeHealth = 100;
+let trees = [];
+let treeHealths = [];
+let totalTrees = 5;
 let particles = [];
 let win = false;
+
 
 function preload() {
   boyIdle = loadAnimation('images/Idle01.png', 'images/Idle15.png');
@@ -20,11 +22,17 @@ function setup() {
   myAnimation.loadAnimation('walk', boyRun);
   myAnimation.loadAnimation('attack', boyAttack);
 
-  tree = createSprite(450, 300, 100, 100, 'static');
-  tree.img = treeImage;
-  tree.scale = 0.25;
-  tree.diameter = 150;
+  for (let i = 0; i < totalTrees; i++) {
+    let x = 300 + i * 100; // Adjust spacing to your liking
+    let tree = createSprite(x, 300, 100, 100, 'static');
+    tree.img = treeImage;
+    tree.scale = 0.25;
+    tree.diameter = 150;
+    trees.push(tree);
+    treeHealths.push(100);
+  }
 }
+
 
 function draw() {
   background(120);
@@ -48,20 +56,31 @@ function draw() {
   }
   else if (kb.pressing('x')) {
     myAnimation.drawAnimation('attack');
-
-    if (tree != null) {
-      let d = dist(myAnimation.getCurrentAnimation().position.x, myAnimation.getCurrentAnimation().position.y, tree.position.x, tree.position.y);
-      if (d < 150) {
-        createParticles(tree.position.x, tree.position.y);
-        treeHealth -= 1;
-        if (treeHealth <= 0) {
-          tree.remove();
-          tree = null;
-          win = true;
+  
+    for (let i = trees.length - 1; i >= 0; i--) {
+      let tree = trees[i];
+      if (tree != null) {
+        let d = dist(
+          myAnimation.getCurrentAnimation().position.x,
+          myAnimation.getCurrentAnimation().position.y,
+          tree.position.x, tree.position.y
+        );
+        if (d < 150) {
+          createParticles(tree.position.x, tree.position.y);
+          treeHealths[i] -= 1;
+          if (treeHealths[i] <= 0) {
+            tree.remove();
+            trees.splice(i, 1);
+            treeHealths.splice(i, 1);
+            if (trees.length === 0) {
+              win = true;
+            }
+          }
         }
       }
     }
   }
+  
   else {
     myAnimation.drawAnimation('idle');
   }
