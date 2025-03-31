@@ -35,7 +35,7 @@ function setup() {
 
 
 function draw() {
-  background(120);
+  background(122,212,34);
 
   if (win) {
     textSize(40);
