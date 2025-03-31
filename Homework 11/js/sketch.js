@@ -13,14 +13,14 @@ let collectibles = [];
 let badItems = [];
 
 function preload() {
-  boyIdle = loadAnimation('images/Idle01.png', 'images/Idle15.png');
-  boyRun = loadAnimation('images/Run01.png', 'images/Run15.png');
-  boyAttack = loadAnimation('images/Attack01.png', 'images/Attack15.png');
+  boyIdle = loadAnimation('images/idle01.png', 'images/idle15.png');
+  boyRun = loadAnimation('images/run01.png', 'images/run15.png');
+  boyAttack = loadAnimation('images/attack01.png', 'images/attack15.png');
   treeImg = loadImage('images/tree.png');
 }
 
 function setup() {
-  new Canvas(800, 800, 'gameArea'); // added because of errors with my index
+  new Canvas(800, 800, 'gameArea');
 
   for (let i = 0; i < 5; i++) {
     let t = new Sprite(random(100, 700), random(100, 700));
@@ -65,33 +65,32 @@ function draw() {
     return;
   }
 
-  if (kb.pressing('x')) {
+  else if (kb.pressing('x')) {
     myAnimation.drawAnimation('attack');
-
+  
     for (let i = trees.length - 1; i >= 0; i--) {
       let tree = trees[i];
-
-      if (!tree || !tree.position) continue;
-
-      let d = dist(
-        myAnimation.sprite.position.x,
-        myAnimation.sprite.position.y,
-        tree.position.x,
-        tree.position.y
-      );
-
-      if (d < 100) {
-        createParticles(tree.position.x, tree.position.y);
-        treeHealth[i] -= 1;
-
-        if (treeHealth[i] <= 0) {
-          tree.remove();
-          trees.splice(i, 1);
-          treeHealth.splice(i, 1);
+  
+      if (tree != null) {
+        if (dist(
+          myAnimation.getCurrentAnimation().position.x,
+          myAnimation.getCurrentAnimation().position.y,
+          tree.position.x,
+          tree.position.y
+        ) < 100) {
+          createParticles(tree.position.x, tree.position.y);
+          treeHealth[i] -= 1;
+  
+          if (treeHealth[i] <= 0) {
+            tree.remove();
+            trees.splice(i, 1);
+            treeHealth.splice(i, 1);
+          }
         }
       }
     }
   }
+  
 
   if (trees.length === 0 && !win) {
     win = true;
@@ -101,7 +100,7 @@ function draw() {
 
   if (myAnimation.sprite.velocity.x !== 0 || myAnimation.sprite.velocity.y !== 0) {
     myAnimation.drawAnimation('run');
-  } else {
+  } else if (!kb.pressing('x')) {
     myAnimation.drawAnimation('idle');
   }
 
@@ -149,5 +148,12 @@ function showMessage(msg, color) {
   textAlign(CENTER, CENTER);
   text(msg, width / 2, height / 2);
   noLoop();
+}
+
+function createParticles(x, y) {
+  for (let i = 0; i < 5; i++) {
+    let p = new Particle(x, y);
+    particles.push(p);
+  }
 }
 
