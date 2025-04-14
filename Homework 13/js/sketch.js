@@ -5,7 +5,7 @@ let numbatModel;
 
 function preload() {
   imgTexture = loadImage('assets/text.jpg');
-  numbatModel = loadModel('assets/NUMBAT.obj', true); 
+  numbatModel = loadModel('assets/NUMBAT.obj', true);
 }
 
 function setup() {
@@ -15,34 +15,41 @@ function setup() {
   for (let i = 0; i < types.length; i++) {
     shapes.push({
       type: types[i],
-      pos: createVector(random(-200, 200), random(-200, 200), random(-200, 200)),
-      speed: random(0.005, 0.015)
+      radius: random(200, 300),           
+      angleOffset: random(TWO_PI),        
+      speed: random(0.005, 0.015),       
+      y: random(-100, 100)                
     });
   }
 }
 
 function draw() {
   background(255, 234, 179);
+  orbitControl();
 
   ambientLight(150);
   pointLight(255, 255, 255, 200, 200, 200);
-  orbitControl();
 
-  // anteater
+  // anteater 3d baby 
   push();
-  rotateY(angle * 0.005); 
-  scale(2); //make smaller
-  normalMaterial(); 
+  rotateY(angle * 0.005);
+  scale(2);
+  emissiveMaterial(0, 150, 255); 
   model(numbatModel);
   pop();
 
-  // my 3d shapes
+  // shapes
   for (let i = 0; i < shapes.length; i++) {
     let s = shapes[i];
-    push();
 
-    rotateY(angle * s.speed);
-    translate(s.pos.x, s.pos.y, s.pos.z);
+    // positions when moving
+    let currentAngle = angle * s.speed + s.angleOffset;
+    let x = cos(currentAngle) * s.radius;
+    let z = sin(currentAngle) * s.radius;
+
+    push();
+    translate(x, s.y, z);
+    
 
     switch (s.type) {
       case 'cone':
@@ -82,8 +89,13 @@ function mousePressed() {
     b = floor(random(shapes.length));
   } while (b === a);
 
-  shapes[a].pos = createVector(random(-200, 200), random(-200, 200), random(-200, 200));
-  shapes[b].pos = createVector(random(-200, 200), random(-200, 200), random(-200, 200));
+  // changing speeds of orbit around anteater
+  shapes[a].radius = random(200, 300);
+  shapes[a].y = random(-100, 100);
+
+  shapes[b].radius = random(200, 300);
+  shapes[b].y = random(-100, 100);
 }
+
 
 
