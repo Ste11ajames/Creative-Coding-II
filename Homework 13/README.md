@@ -1,0 +1,1 @@
+unfortunately my 3d object i made in illustrator could not be exported as a 3d object only 2d son i found a 3d anteater on the web and used that instead. I also was having trouble using different materials on it, they just didn't seem to show up so I used the normal material as well. Hope thats okay. 
